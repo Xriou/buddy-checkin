@@ -1,0 +1,6 @@
+# 登录凭据，严禁提交
+state.json
+
+# Python
+__pycache__/
+*.pyc
