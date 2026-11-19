@@ -1,0 +1,26 @@
+name: keepalive
+
+on:
+  schedule:
+    # 每月1日 UTC 03:07 = 北京时间 11:07。作用：仓库60天无commit会被GitHub自动禁用定时任务，此提交保活
+    - cron: "7 3 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Keepalive commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          date -u '+last_keepalive: %Y-%m-%d %H:%M:%S UTC' > .keepalive
+          git add .keepalive
+          git commit -m "keepalive: $(date -u '+%Y-%m-%d')" || echo "nothing to commit"
+          git push
